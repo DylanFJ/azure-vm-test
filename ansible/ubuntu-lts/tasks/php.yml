@@ -1,0 +1,29 @@
+- block: #php
+    # NOTE: Ubuntu 20.04 ships with PHP 7.4 in its upstream repositories. Just install it and the extensions you with the apt package manager.
+    - name: Add php repository for Ubuntu version < 20.04
+      apt_repository:
+        repo: ppa:ondrej/php
+    - name: Install php 7.4 cli and php 7.4 fpm
+      apt:
+        name: [
+            php7.4-cli,
+            php7.4-fpm
+        ]
+    - name: Ensure that PHP 7.4 FPM is started
+      service:
+        name: php7.4-fpm
+        state: started
+    - name: "Install php extensions: common, curl, intl, json, mbstring, mysql, opcache, zip, xml"
+      apt:
+        state: present
+        name: [
+            php7.4-common,
+            php7.4-curl,
+            php7.4-intl,
+            php7.4-json,
+            php7.4-mbstring,
+            php7.4-mysql,
+            php7.4-opcache,
+            php7.4-xml,
+            php7.4-zip,
+        ]

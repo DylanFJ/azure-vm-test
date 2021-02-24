@@ -1,0 +1,23 @@
+- block: #System
+    - name: "Ubuntu {{ ansible_distribution_major_version }} ({{ ansible_distribution_release }})"
+      command: "echo Hello everyone !"
+    - name: "Update system and packages: 'apt upgrade' or 'aptitude safe-upgrade'"
+      apt:
+        #autoremove: "yes"
+        #autoclean: "yes"
+        update_cache: "yes"
+        upgrade: "yes"
+    - name: Add some tools
+      apt:
+        name: [
+            systemd,
+            fail2ban,
+            wget,
+            apt-transport-https,
+            curl,
+            build-essential,
+            make,
+            gnupg2,
+            ca-certificates,
+            lsb-release
+        ]

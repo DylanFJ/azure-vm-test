@@ -1,0 +1,8 @@
+- block:
+  - name: Install composer
+    get_url:
+      url: https://getcomposer.org/composer-stable.phar
+      dest: /usr/local/bin/composer
+      mode: 0750
+      group: '{{ web_user }}'
+      owner: '{{ web_user }}'

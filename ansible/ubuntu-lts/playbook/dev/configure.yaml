@@ -1,0 +1,52 @@
+---
+- hosts: vm
+  become: yes
+  vars_files: ['{{ inventory_dir }}/../ubuntu-lts/vars/common.yaml']
+  tasks:
+
+    - block:
+        - name: Configure www directory
+          file:
+            path: /var/www
+            owner: '{{ web_user }}'
+            group: '{{ web_user }}'
+            state: directory
+            mode: 0755
+            recurse: "yes"
+    - block:
+        - name: Check if directory exists
+          stat: path='/var/www/azure-vm-test/'
+          register: project_dir_check
+        - name: Clone the repo
+          git:
+            repo: https://github.com/DylanFJ/azure-vm-test.git
+            dest: /var/www/azure-vm-test/
+          when: project_dir_check.stat.exists == False or project_dir_check.stat.isdir == False
+          become_user: '{{ web_user }}'
+        - name: Make sure correct attributes to web directory
+          file:
+            path: /var/www/azure-vm-test/
+            owner: '{{ web_user }}'
+            group: '{{ web_user }}'
+            state: directory
+            mode: 0700
+            recurse: "yes"
+        - name: Update repo
+          command:
+            cmd: "git pull"
+            chdir: /var/www/azure-vm-test/web
+          become_user: '{{ web_user }}'
+        - name: Create .env file for symfony
+          copy:
+            src: /var/www/azure-vm-test/web/.env.dev
+            dest: /var/www/azure-vm-test/web/.env
+            mode: 0700
+            remote_src: "yes"
+          become_user: '{{ web_user }}'
+        - name: Composer install (with dev)
+          command:
+            chdir: /var/www/azure-vm-test/web
+            argv:
+              - composer
+              - install
+          become_user: '{{ web_user }}'

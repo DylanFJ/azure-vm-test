@@ -1,0 +1,19 @@
+- block: #NGINX
+    - name: Add NGINX stable repository
+      apt_repository:
+        repo: ppa:nginx/stable
+    - name: Install NGINX
+      apt: name=nginx-light
+    - name: Create if not exists sites-available and sites-enabled
+      file:
+        path: '/etc/nginx/{{ item }}'
+        state: directory
+      with_items: ['sites-available','sites-enabled']
+    - name: Remove default conf if present
+      file:
+        path: ['/etc/nginx/sites-available/default','/etc/nginx/sites-enabled/default','/etc/nginx/conf/default']
+        state: absent
+    - name: Ensure NGINX started
+      service:
+        name: nginx
+        state: started

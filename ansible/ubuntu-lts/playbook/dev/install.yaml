@@ -1,0 +1,22 @@
+---
+- hosts: vm
+  become: "yes"
+  vars_files: ['{{ inventory_dir }}/../ubuntu-lts/vars/common.yaml']
+  tasks:
+
+    - block:
+        - name:
+          import_tasks: './../../tasks/system.yml'
+
+        - name:
+          import_tasks: './../../tasks/git.yml'
+
+        # You should not include this task if you have already a web server and listen on port 80
+        - name:
+          import_tasks: './../../tasks/nginx.yml'
+
+        - name:
+          import_tasks: './../../tasks/php.yml'
+
+        - name:
+          import_tasks: './../../tasks/composer.yaml'
